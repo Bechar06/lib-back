@@ -31,6 +31,5 @@ public class Transaction implements Serializable {
     private LocalDateTime dateOfIssue;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDateTime dueDate;
-
     private boolean payed;
 }

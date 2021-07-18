@@ -34,8 +34,8 @@ public class SwaggerConfig {
                 "Library Management System API",
                 "1.0",
                 "Terms of Service",
-                new Contact("Abdelhak Ezzaidi", "https://www.linkedin.com/in/abdelhak-ezzaidi-22a901173/detail/background-image/",
-                        "abdlhak01@gmail.com"),
+                new Contact("MASOUD Mustapha", "https://www.linkedin.com/in/mustapha-masoud-313a39b6/",
+                        "masoud.smia91@gmail.com"),
                 "Apache License Version 2.0",
                 "https://www.apache.org/licesen.html"
         );

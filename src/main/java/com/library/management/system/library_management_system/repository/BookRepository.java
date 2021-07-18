@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
     Book findFirstByOrderByBookId();
-
     Book findByCodeBook(String codeBook);
-
     boolean existsByCodeBook(String codeBook);
 
 }

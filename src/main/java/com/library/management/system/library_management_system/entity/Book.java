@@ -32,5 +32,6 @@ public class Book implements Serializable {
     private String edition;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDateTime dateOfPurchase;
+    private Integer Qnt;
 
 }
