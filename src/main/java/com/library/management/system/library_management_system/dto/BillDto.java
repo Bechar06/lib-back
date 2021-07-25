@@ -16,5 +16,6 @@ public class BillDto {
     private LocalDateTime date;
     private Integer memberId;
     private String memberCode;
-    private Integer amount;
+    private Double amount;
+    private Integer bookId;
 }

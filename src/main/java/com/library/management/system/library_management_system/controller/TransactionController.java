@@ -70,4 +70,9 @@ public class TransactionController {
     private List<TransactionDto> findAll() {
         return transactionService.findAll();
     }
+    
+    @PostMapping(value = "/approve")
+    private List<TransactionDto> approve(@RequestBody TransactionDto TransactionDto) {
+    		return transactionService.approveTransaction(TransactionDto);
+    }
 }
