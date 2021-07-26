@@ -21,4 +21,5 @@ public class BookDto {
     private String status;
     private String edition;
     private LocalDateTime dateOfPurchase;
+    private Integer qnt;
 }
