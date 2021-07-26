@@ -1,8 +1,12 @@
 package com.library.management.system.library_management_system.controller;
 
 import com.google.zxing.WriterException;
+import com.library.management.system.library_management_system.dto.BillDto;
+import com.library.management.system.library_management_system.dto.BookDto;
 import com.library.management.system.library_management_system.dto.TransactionDto;
 import com.library.management.system.library_management_system.model.LMSException;
+import com.library.management.system.library_management_system.service.BillService;
+import com.library.management.system.library_management_system.service.BookService;
 import com.library.management.system.library_management_system.service.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -23,6 +27,15 @@ public class TransactionController {
 
     @Autowired
     private TransactionService transactionService;
+    
+    @Autowired
+    private BillService billService;
+    
+
+    @Autowired
+    private BookService bookService;
+    
+    
     @ApiOperation(value = "View the first Transaction in the database",response = Iterable.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved Transaction"),
@@ -73,6 +86,13 @@ public class TransactionController {
     
     @PostMapping(value = "/approve")
     private List<TransactionDto> approve(@RequestBody TransactionDto TransactionDto) {
-    		return transactionService.approveTransaction(TransactionDto);
+    	try {
+    		BookDto book = bookService.findByCodeBook(TransactionDto.getBookCode());
+			billService.add(BillDto.map(TransactionDto, book.getPrice()));
+
+	    	return transactionService.approveTransaction(TransactionDto);
+		} catch (LMSException e) {
+			return transactionService.findAll();
+		}
     }
 }
