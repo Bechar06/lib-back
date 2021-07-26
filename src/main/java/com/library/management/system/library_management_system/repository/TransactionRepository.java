@@ -19,7 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     Transaction findByCodeTrans(String codeTrans);
 
     boolean existsByCodeTrans(String codeTrans);
-
     @Transactional
     @Modifying
     @Query("update Transaction set payed=true where memberRecordId.memberRecordId=:memberId")
