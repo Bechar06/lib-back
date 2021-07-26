@@ -32,4 +32,7 @@ public class Transaction implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDateTime dueDate;
     private boolean payed;
+    
+    @Column
+    private boolean approved;
 }

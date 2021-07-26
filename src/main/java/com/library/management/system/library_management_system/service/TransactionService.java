@@ -2,10 +2,13 @@ package com.library.management.system.library_management_system.service;
 
 import com.google.zxing.WriterException;
 import com.library.management.system.library_management_system.converter.TransactionConverter;
+import com.library.management.system.library_management_system.dto.BillDto;
 import com.library.management.system.library_management_system.dto.TransactionDto;
+import com.library.management.system.library_management_system.entity.Book;
 import com.library.management.system.library_management_system.entity.MemberRecord;
 import com.library.management.system.library_management_system.entity.Transaction;
 import com.library.management.system.library_management_system.model.LMSException;
+import com.library.management.system.library_management_system.repository.BookRepository;
 import com.library.management.system.library_management_system.repository.MemberRecordRepository;
 import com.library.management.system.library_management_system.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
 
 @Service
 public class TransactionService {
@@ -27,6 +33,9 @@ public class TransactionService {
 
     @Autowired
     MemberRecordRepository memberRecordRepository;
+    
+    @Autowired
+    BookRepository bookRepository;
 
     public TransactionDto findFirst() {
         Transaction transaction = transactionRepository.findFirstByOrderByTransId();
@@ -90,11 +99,32 @@ public class TransactionService {
     }
 
     public  List<TransactionDto> findAll() {
-        List<Transaction> transactions = transactionRepository.findAll();
+        List<Transaction> transactions = transactionRepository.findByApprovedFalse();
         List<TransactionDto> transactionsDto = new ArrayList<>();
         transactions.forEach(item -> {
             transactionsDto.add(transactionConverter.convert(item));
         });
         return transactionsDto;
     }
+
+    @Transactional
+	public List<TransactionDto> approveTransaction(TransactionDto transactionDto) {
+		Transaction transaction = transactionRepository.findById(transactionDto.getTransId()).orElse(null);
+		if(transaction != null) {
+			transaction.setApproved(true);
+		}
+		transactionRepository.saveAndFlush(transaction);
+		//Book book = bookRepository.findById(transaction.getBookId());
+		Book book = bookRepository.findById(transactionDto.getIdBook()).orElse(null);
+		MemberRecord membreRecord = memberRecordRepository.findById(transactionDto.getMemberId()).orElse(null);
+		String uuid = UUID.randomUUID().toString();
+		BillDto bill = new BillDto();
+		bill.setCodeBill(uuid);
+		bill.setMemberCode(membreRecord.getCodeMemberRecord());
+		bill.setAmount(book.getPrice());
+		bill.setDate(transaction.getDateOfIssue());
+		
+        return findAll();
+	}
+    
 }

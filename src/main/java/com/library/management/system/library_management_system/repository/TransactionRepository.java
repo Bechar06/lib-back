@@ -1,8 +1,7 @@
 package com.library.management.system.library_management_system.repository;
 
-import com.library.management.system.library_management_system.entity.Book;
-import com.library.management.system.library_management_system.entity.MemberRecord;
-import com.library.management.system.library_management_system.entity.Transaction;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.library.management.system.library_management_system.entity.MemberRecord;
+import com.library.management.system.library_management_system.entity.Transaction;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
@@ -27,8 +27,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     @Query("select count(tr.transId) from Transaction tr where tr.memberRecordId.memberRecordId=:memberId and current_date > tr.dueDate")
     Integer numberOfCurrentTransaction(@Param("memberId") Integer memberId);
 
-    List<Transaction> findByMemberRecordId(MemberRecord memberId);
+	List<Transaction> findByMemberRecordId(MemberRecord memberId);
 
-
+	List<Transaction> findByApprovedFalse();
     void deleteAllByMemberRecordId(Integer memberId);
 }

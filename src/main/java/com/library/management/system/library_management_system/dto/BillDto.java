@@ -16,5 +16,17 @@ public class BillDto {
     private LocalDateTime date;
     private Integer memberId;
     private String memberCode;
-    private Integer amount;
+    private Double amount;
+    private Integer bookId;
+    
+    public static BillDto map(TransactionDto transactionDto, Double bookPrice) {
+    	BillDto bill = new BillDto();
+    	bill.setBookId(transactionDto.getIdBook());
+    	bill.setCodeBill(transactionDto.getCodeTrans());
+    	bill.setMemberId(transactionDto.getMemberId());
+    	bill.setMemberCode(transactionDto.getMemberCode());
+    	bill.setDate(LocalDateTime.now());
+    	bill.setAmount(bookPrice);
+    	return bill;
+    }
 }
