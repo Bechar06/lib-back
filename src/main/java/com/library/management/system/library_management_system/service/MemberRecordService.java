@@ -11,6 +11,7 @@ import com.library.management.system.library_management_system.repository.Transa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,6 +58,7 @@ public class MemberRecordService {
         return memberRecordDto1;
     }
 
+    @Transactional
     public void delete(Integer id) throws LMSException, IOException {
         Optional<MemberRecord> memberRecord = memberRecordRepository.findById(id);
         if (memberRecord.isPresent()) {
@@ -64,7 +66,7 @@ public class MemberRecordService {
             if(transactionInProgress>0){
                 throw new LMSException("vous ne pouvez pas supprimer ce membre parce qu'il a une transaction en cours");
             }
-            transactionRepository.deleteAllByMemberRecordId(id);
+            transactionRepository.deleteAllByMemberRecordId(memberRecord.get());
             memberRecordRepository.deleteById(id);
             Files.deleteIfExists(Paths.get(QRCodeGenerator.QR_CODE_IMAGE_PATH + memberRecord.get().getCodeMemberRecord() + ".png"));
         } else {

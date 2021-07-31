@@ -21,14 +21,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     boolean existsByCodeTrans(String codeTrans);
     @Transactional
     @Modifying
-    @Query("update Transaction set payed=true where memberRecordId.memberRecordId=:memberId")
-    void updatePayedStatus(@Param("memberId") Integer memberId);
+    @Query("update Transaction set payed=true where transId=:id")
+    void updatePayedStatus(@Param("id") Integer id);
 
-    @Query("select count(tr.transId) from Transaction tr where tr.memberRecordId.memberRecordId=:memberId and current_date > tr.dueDate")
+    @Query("select count(tr.transId) from Transaction tr where tr.memberRecordId.memberRecordId=:memberId and tr.approved = false")
     Integer numberOfCurrentTransaction(@Param("memberId") Integer memberId);
 
 	List<Transaction> findByMemberRecordId(MemberRecord memberId);
 
+    List<Transaction> findByTransIdAndMemberRecordId(Integer transId, MemberRecord memberId);
+
 	List<Transaction> findByApprovedFalse();
-    void deleteAllByMemberRecordId(Integer memberId);
+    void deleteAllByMemberRecordId(MemberRecord memberId);
 }

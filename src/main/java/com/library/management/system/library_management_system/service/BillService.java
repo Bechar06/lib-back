@@ -19,6 +19,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class BillService {
         }
         Bill bill = billConverter.convert(billDto);
         billRepository.save(bill);
-        transactionRepository.updatePayedStatus(bill.getMemberRecordId().getMemberRecordId());
+        transactionRepository.updatePayedStatus(bill.getTransactionId());
         return billConverter.convert(bill);
     }
 
@@ -92,9 +93,9 @@ public class BillService {
         return billConverter.convert(billRepository.save(billConverter.convert(billDto)));
     }
 
-    public List<BookDto> fillDataSetForReport(Integer memberId) {
+    public List<BookDto> fillDataSetForReport(Integer memberId, Integer billId) {
     	MemberRecord id = memberRecordRepository.findById(memberId).get();
-        List<Transaction> transactions = transactionRepository.findByMemberRecordId(id);
+        List<Transaction> transactions = transactionRepository.findByTransIdAndMemberRecordId(billId, id);
         List<Book> books= new ArrayList<>();
         transactions.forEach( trans -> {
             books.add(trans.getBookId());
@@ -107,7 +108,21 @@ public class BillService {
         Map<String, Object> params = new HashMap<>();
         Optional<Bill> bill = billRepository.findById(billId);
         String date = bill.get().getDate().format(formatter);
-        List<BookDto> bookDtos = fillDataSetForReport(bill.get().getMemberRecordId().getMemberRecordId());
+        MemberRecord id = memberRecordRepository.findById(bill.get().getMemberRecordId().getMemberRecordId()).get();
+        List<Transaction> transactions = transactionRepository.findByTransIdAndMemberRecordId(bill.get().getTransactionId(), id);
+        List<Book> books= new ArrayList<>();
+        Integer quantity = 0;
+        transactions.forEach( trans -> {
+            books.add(trans.getBookId());
+        });
+        quantity = transactions.get(0).getQuantity();
+        List<BookDto> bookDtos = bookConverter.convertAllToDto(books);
+        Double price = 0d;
+
+        if(!CollectionUtils.isEmpty(bookDtos)){
+            price = bookDtos.get(0).getPrice();
+        }
+
         MemberRecord memberRecord = bill.get().getMemberRecordId();
         params.put("fullName", memberRecord.getFullName());
         params.put("adress", memberRecord.getAdress());
@@ -115,6 +130,8 @@ public class BillService {
         params.put("date", date);
         params.put("codeMemberRecord", memberRecord.getCodeMemberRecord());
         params.put("billCode", bill.get().getCodeBill());
+        params.put("amount", quantity * price);
+        params.put("quantity", quantity);
         JRDataSource bookDataSource = new JRBeanCollectionDataSource(bookDtos);
         return reportService.generatePDFReport("facture", params, bookDataSource);
     }
