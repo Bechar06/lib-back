@@ -18,6 +18,8 @@ public class BillDto {
     private String memberCode;
     private Double amount;
     private Integer bookId;
+    private Integer transactionId;
+    private Integer quantity;
     
     public static BillDto map(TransactionDto transactionDto, Double bookPrice) {
     	BillDto bill = new BillDto();
@@ -25,8 +27,10 @@ public class BillDto {
     	bill.setCodeBill(transactionDto.getCodeTrans());
     	bill.setMemberId(transactionDto.getMemberId());
     	bill.setMemberCode(transactionDto.getMemberCode());
+        bill.setTransactionId(transactionDto.getTransId());
     	bill.setDate(LocalDateTime.now());
     	bill.setAmount(bookPrice);
+        bill.setQuantity(transactionDto.getQuantity());
     	return bill;
     }
 }

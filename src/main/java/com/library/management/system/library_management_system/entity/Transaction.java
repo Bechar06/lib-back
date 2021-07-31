@@ -6,18 +6,17 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(	name = "transaction",
+@Table(name = "transaction",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "codeTrans")
         })
 public class Transaction implements Serializable {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer transId;
     @NotNull
     private String codeTrans;
@@ -29,10 +28,12 @@ public class Transaction implements Serializable {
     private Book bookId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDateTime dateOfIssue;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private LocalDateTime dueDate;
+
     private boolean payed;
-    
+
     @Column
     private boolean approved;
+
+    @Column
+    private Integer quantity;
 }

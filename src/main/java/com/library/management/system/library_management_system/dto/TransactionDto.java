@@ -18,5 +18,5 @@ public class TransactionDto {
     private Integer idBook;
     private String bookCode;
     private LocalDateTime dateOfIssue;
-    private LocalDateTime dueDate;
+    private Integer quantity;
 }

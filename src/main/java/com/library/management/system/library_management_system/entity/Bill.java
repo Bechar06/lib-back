@@ -25,5 +25,7 @@ public class Bill implements Serializable {
     @JoinColumn(name = "memberRecordId", referencedColumnName = "memberRecordId")
     @ManyToOne
     private MemberRecord memberRecordId;
-    private Integer amount;
+    private Double amount;
+    private Integer transactionId;
+    private Integer quantity;
 }
